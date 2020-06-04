@@ -56,10 +56,8 @@
             </button>
           </b-td>
         </b-tr>
-
         </b-tbody>
       </b-table-simple>
-
       <ul >
       </ul>
     </div>
@@ -127,6 +125,7 @@ export default {
       } else {
         partsList = this.$store.getters.getPartsList;
       }
+      this.setPartsTotal(partsList);
       const start = this.pageNum * (this.pageCount * 1);
       const end = start + this.pageCount * 1;
       return partsList.slice(start, end);
@@ -134,6 +133,7 @@ export default {
     pageTotal() {
       const len = this.partsTotal;
       const size = this.pageCount * 1;
+      console.log(len / size);
       return Math.ceil(len / size);
     },
   },
@@ -148,8 +148,6 @@ export default {
   methods: {
     async fetchPartsList() {
       await this.$store.dispatch('fetchPartsList');
-      const partsList = this.$store.getters.getPartsList;
-      this.partsTotal = partsList.length;
     },
     togglePart(id) {
       this.partsList.map((el) => {
@@ -161,6 +159,9 @@ export default {
         }
         return el;
       });
+    },
+    setPartsTotal(partsList) {
+      this.partsTotal = partsList.length;
     },
     prevPage() {
       this.pageNum -= 1;
