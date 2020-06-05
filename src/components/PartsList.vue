@@ -35,37 +35,10 @@
           </b-tr>
         </b-thead>
         <b-tbody>
-          <b-tr v-for="part in partsList" :key="part.partId">
-            <b-td>
-              {{ getDate(part.createdAt) }}
-            </b-td>
-            <b-td>
-              {{ part.vendorCode}}
-            </b-td>
-            <b-td>
-              3
-            </b-td>
-            <b-td>
-              {{ part.priceMin }}
-            </b-td>
-            <b-td>
-              {{ part.brand }}
-            </b-td>
-            <b-td>
-              {{ part.partName }}
-            </b-td>
-            <b-td>
-              {{ part.partId }}
-            </b-td>
-            <b-td>
-              {{ part.isDeleted ? 'В архиве' : 'Доступна' }}
-            </b-td>
-            <b-td class="d-flex justify-content-center">
-              <button @click="togglePart(part.partId)">
-                {{ part.isDeleted ? 'Восстановить' : 'Удалить'}}
-              </button>
-            </b-td>
-          </b-tr>
+          <PartItem
+            v-for="part in partsList" :key="part.partId"
+            :partData="part"
+            @togglePart="checkEmptyPage" />
         </b-tbody>
       </b-table-simple>
       <ul >
@@ -91,11 +64,13 @@
 
 <script>
 import { BTableSimple } from 'bootstrap-vue';
+import PartItem from './PartItem.vue';
 
 export default {
   name: 'PartsList',
   components: {
     BTableSimple,
+    PartItem,
   },
   data() {
     return {
@@ -171,16 +146,7 @@ export default {
     async fetchPartsList() {
       await this.$store.dispatch('fetchPartsList');
     },
-    togglePart(id) {
-      this.partsList.map((el) => {
-        if (el.partId === id) {
-          const changedElem = { ...el };
-          changedElem.isDeleted = !changedElem.isDeleted;
-          this.$store.dispatch('updatePart', changedElem);
-          return changedElem;
-        }
-        return el;
-      });
+    checkEmptyPage() {
       if (this.partsList.length === 0 && this.currentPage[this.tabFiltering] !== 0) {
         this.prevPage();
       }
@@ -204,10 +170,6 @@ export default {
       }
       this.$store.dispatch('setSorting', payload);
     },
-    getDate(dateString) {
-      const date = new Date(dateString);
-      return `${date.getDay()}.${date.getMonth()}.${date.getFullYear()}`;
-    },
     prevPage() {
       this.currentPage[this.tabFiltering] -= 1;
     },
@@ -217,23 +179,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-th.name-col {
-  width: 15rem;
-}
-th.date-col {
-  width: 10rem;
-}
-th.price-col {
-  width: 6rem;
-}
-tr {
-  td {
-    vertical-align: middle;
-    button {
-      width: 120px;
-    }
-  }
-}
-</style>
