@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     activeTab() {
-      return this.$store.getters.getActiveTab;
+      return this.$store.getters.activeTab;
     },
   },
   methods: {

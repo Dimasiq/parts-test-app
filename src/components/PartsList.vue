@@ -90,7 +90,7 @@ export default {
   },
   computed: {
     tabFiltering() {
-      return this.$store.getters.getActiveTab;
+      return this.$store.getters.activeTab;
     },
     sorting() {
       return this.$store.getters.sorting;
@@ -98,21 +98,21 @@ export default {
     partsList() {
       let partsList = [];
       if (this.tabFiltering === 'deleted') {
-        partsList = this.$store.getters.getPartsList.filter((el) => {
+        partsList = this.$store.getters.partsList.filter((el) => {
           if (el.isDeleted) {
             return el;
           }
           return null;
         });
       } else if (this.tabFiltering === 'available') {
-        partsList = this.$store.getters.getPartsList.filter((el) => {
+        partsList = this.$store.getters.partsList.filter((el) => {
           if (!el.isDeleted) {
             return el;
           }
           return null;
         });
       } else {
-        partsList = this.$store.getters.getPartsList;
+        partsList = this.$store.getters.partsList;
       }
       return this.paginateParts(partsList);
     },
@@ -144,7 +144,7 @@ export default {
   },
   methods: {
     async fetchPartsList() {
-      await this.$store.dispatch('fetchPartsList');
+      await this.$store.dispatch('init');
     },
     checkEmptyPage() {
       if (this.partsList.length === 0 && this.currentPage[this.tabFiltering] !== 0) {

@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     togglePart(id) {
-      const partsList = this.$store.getters.getPartsList;
+      const { partsList } = this.$store.getters;
       partsList.map((el) => {
         if (el.partId === id) {
           const changedElem = { ...el };
