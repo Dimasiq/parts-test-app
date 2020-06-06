@@ -44,32 +44,33 @@
       <ul >
       </ul>
     </div>
-    <div v-if="partsList.length">
-      {{ stringShown }}
+    <div class="mb-4" v-if="partsList.length">
+      <p>{{ stringShown }}</p>
       <br/>
-      <button
+      <b-button
+        class="mr-4"
+        variant="primary"
         @click="prevPage"
         :disabled="currentPage[tabFiltering] == 0">
         Prev
-      </button>
-      <button
+      </b-button>
+      <b-button
+        variant="primary"
         @click="nextPage"
         :disabled="currentPage[tabFiltering] >= pagesTotal - 1
           || partsList.length < (pagePortion * 1)">
         Next
-      </button>
+      </b-button>
     </div>
   </div>
 </template>
 
 <script>
-import { BTableSimple } from 'bootstrap-vue';
 import PartItem from './PartItem.vue';
 
 export default {
   name: 'PartsList',
   components: {
-    BTableSimple,
     PartItem,
   },
   data() {
@@ -114,7 +115,8 @@ export default {
       } else {
         partsList = this.$store.getters.partsList;
       }
-      return this.paginateParts(partsList);
+      const filteredParts = this.setFilters(partsList);
+      return this.paginateParts(filteredParts);
     },
     pagesTotal() {
       const len = this.partsTotal;
@@ -169,6 +171,24 @@ export default {
         payload.desc = true;
       }
       this.$store.dispatch('setSorting', payload);
+    },
+    setFilters(parts) {
+      const { filters } = this.$store.getters;
+      let filteredParts = parts;
+
+      if (filters.manufacturerId) {
+        filteredParts = filteredParts.filter((el) => (
+          el.manufacturerId === filters.manufacturerId ? el : null
+        ));
+      }
+
+      if (filters.vendorCode && filters.vendorCode !== null && filters.vendorCode.length >= 3) {
+        filteredParts = filteredParts.filter((el) => (
+          String(el.vendorCode).toLowerCase().includes(String(filters.vendorCode).toLowerCase())
+        ));
+      }
+
+      return filteredParts;
     },
     prevPage() {
       this.currentPage[this.tabFiltering] -= 1;

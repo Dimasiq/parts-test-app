@@ -25,9 +25,11 @@
       {{ partData.isDeleted ? 'В архиве' : 'Доступна' }}
     </b-td>
     <b-td class="d-flex justify-content-center">
-      <button @click="togglePart(partData.partId)">
-        {{ partData.isDeleted ? 'Восстановить' : 'Удалить'}}
-      </button>
+      <b-button
+        :variant="partData.isDeleted ? 'success' : 'danger'"
+        @click="togglePart(partData.partId)">
+        {{ partData.isDeleted ? 'Восстановить' : 'Удалить' }}
+      </b-button>
     </b-td>
   </b-tr>
 </template>
@@ -82,7 +84,7 @@ tr {
   td {
     vertical-align: middle;
     button {
-      width: 120px;
+      width: 130px;
     }
   }
 }

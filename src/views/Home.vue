@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <h1>Список запчастей</h1>
+    <FiltersBox />
     <div class="tabs">
       <span
         @click="changeFilter('all')"
@@ -25,11 +26,13 @@
 <script>
 
 import PartsList from '../components/PartsList.vue';
+import FiltersBox from '../components/FiltersBox.vue';
 
 export default {
   name: 'Home',
   components: {
     PartsList,
+    FiltersBox,
   },
   computed: {
     activeTab() {

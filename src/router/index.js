@@ -10,17 +10,6 @@ const routes = [
     name: 'Home',
     component: Home,
   },
-  {
-    path: '/available',
-    name: 'Available',
-    component: () => import('../views/Available.vue'),
-  },
-  {
-    path: '/deleted',
-    name: 'Deleted',
-    component: () => import('../views/Deleted.vue'),
-  },
-
 ];
 
 const router = new VueRouter({
