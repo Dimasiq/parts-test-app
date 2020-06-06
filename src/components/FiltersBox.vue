@@ -142,6 +142,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.form-group {
+  width: 14rem;
+}
 .clear-date {
   cursor: pointer;
   &:hover {

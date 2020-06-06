@@ -17,18 +17,21 @@
       <b-table-simple class="mt-3" responsive v-else>
         <b-thead>
           <b-tr>
-            <b-th class="date-col" @click="setSorting('createdAt')">Создано
-              {{ sorting.param === 'createdAt' ? (sorting.desc ? '&#8595;' : '&#8593;') : '' }}
+            <b-th class="date-col sortable position-relative"
+              :class="sorting.param === 'createdAt' ? (sorting.desc ? 'desc' : 'asc') : ''"
+              @click="setSorting('createdAt')">Создано
             </b-th>
             <b-th>Код товара</b-th>
             <b-th>Остаток</b-th>
-            <b-th class="price-col" @click="setSorting('priceMin')">Цена
-              {{ sorting.param === 'priceMin' ? (sorting.desc ? '&#8595;' : '&#8593;') : '' }}
+            <b-th class="price-col sortable position-relative"
+              :class="sorting.param === 'priceMin' ? (sorting.desc ? 'desc' : 'asc') : ''"
+              @click="setSorting('priceMin')">Цена
             </b-th>
             <b-th>Производитель</b-th>
             <b-th class="name-col">Наименование</b-th>
-            <b-th @click="setSorting('partId')">Номер детали
-              {{ sorting.param === 'partId' ? (sorting.desc ? '&#8595;' : '&#8593;') : '' }}
+            <b-th class="part-id-col sortable position-relative"
+              :class="sorting.param === 'partId' ? (sorting.desc ? 'desc' : 'asc') : ''"
+              @click="setSorting('partId')">№ детали
             </b-th>
             <b-th>Статус</b-th>
             <b-th></b-th>
@@ -214,3 +217,45 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+th {
+  text-align: center;
+  &.sortable {
+    text-decoration: underline;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  &.name-col {
+    min-width: 15rem;
+  }
+  &.date-col {
+    min-width: 10rem;
+  }
+  &.price-col {
+    min-width: 6rem;
+  }
+  &.part-id-col {
+    min-width: 8rem;
+  }
+  &::after {
+    width: auto;
+    height: auto;
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 20%;
+  }
+  &.asc {
+    &::after {
+      content: "↑";
+    }
+  }
+  &.desc {
+    &::after {
+      content: "↓";
+    }
+  }
+}
+</style>

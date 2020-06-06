@@ -75,15 +75,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-th.name-col {
-  width: 15rem;
-}
-th.date-col {
-  width: 10rem;
-}
-th.price-col {
-  width: 6rem;
-}
 tr {
   td {
     vertical-align: middle;
