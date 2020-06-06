@@ -100,5 +100,8 @@ export default {
     filters(state) {
       return state.filtering;
     },
+    defaultFiltering(state) {
+      return state.defaultFiltering;
+    },
   },
 };

@@ -1,8 +1,8 @@
 <template>
-  <div class="home">
+  <div class="home pt-4">
     <h1>Список запчастей</h1>
     <FiltersBox />
-    <div class="tabs">
+    <div class="tabs mt-4">
       <span
         @click="changeFilter('all')"
         class="tab-link"

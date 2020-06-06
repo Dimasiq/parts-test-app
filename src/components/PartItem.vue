@@ -1,7 +1,8 @@
 <template>
   <b-tr>
     <b-td>
-      {{ partDate }}
+      {{ createdAt.date }}
+      <pre>{{ createdAt.time }}</pre>
     </b-td>
     <b-td>
       {{ partData.vendorCode}}
@@ -46,9 +47,13 @@ export default {
     },
   },
   computed: {
-    partDate() {
-      const date = new Date(this.partData.createdAt);
-      return `${date.getDay()}.${date.getMonth()}.${date.getFullYear()}`;
+    createdAt() {
+      const date = new Date(this.partData.createdAt).toLocaleDateString();
+      const time = new Date(this.partData.createdAt).toLocaleTimeString();
+      return {
+        date,
+        time,
+      };
     },
   },
   methods: {
@@ -63,7 +68,6 @@ export default {
         }
         return el;
       });
-
       this.$emit('togglePart');
     },
   },

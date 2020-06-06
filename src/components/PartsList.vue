@@ -17,7 +17,7 @@
       <b-table-simple class="mt-3" responsive v-else>
         <b-thead>
           <b-tr>
-            <b-th class="date-col" @click="setSorting('createdAt')">Дата создания
+            <b-th class="date-col" @click="setSorting('createdAt')">Создано
               {{ sorting.param === 'createdAt' ? (sorting.desc ? '&#8595;' : '&#8593;') : '' }}
             </b-th>
             <b-th>Код товара</b-th>
@@ -44,22 +44,22 @@
       <ul >
       </ul>
     </div>
-    <div class="mb-4" v-if="partsList.length">
-      <p>{{ stringShown }}</p>
+    <p>{{ stringShown }}</p>
+    <div class="mb-4" v-if="partsList.length && pagesTotal !== 1">
       <br/>
       <b-button
         class="mr-4"
         variant="primary"
         @click="prevPage"
         :disabled="currentPage[tabFiltering] == 0">
-        Prev
+        Назад
       </b-button>
       <b-button
         variant="primary"
         @click="nextPage"
         :disabled="currentPage[tabFiltering] >= pagesTotal - 1
           || partsList.length < (pagePortion * 1)">
-        Next
+        Далее
       </b-button>
     </div>
   </div>
@@ -188,6 +188,21 @@ export default {
         ));
       }
 
+      if (filters.dateFrom) {
+        filteredParts = filteredParts.filter((el) => {
+          const partCreated = new Date(new Date(el.createdAt).getTime()).toLocaleDateString();
+          const filterDate = new Date(new Date(filters.dateFrom).getTime()).toLocaleDateString();
+          return Date.parse(partCreated) >= Date.parse(filterDate) ? el : null;
+        });
+      }
+
+      if (filters.dateTo) {
+        filteredParts = filteredParts.filter((el) => {
+          const partCreated = new Date(new Date(el.createdAt).getTime()).toLocaleDateString();
+          const filterDate = new Date(new Date(filters.dateTo).getTime()).toLocaleDateString();
+          return Date.parse(partCreated) <= Date.parse(filterDate) ? el : null;
+        });
+      }
       return filteredParts;
     },
     prevPage() {
