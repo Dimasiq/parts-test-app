@@ -1,7 +1,9 @@
 <template>
   <div>
-    <b-button v-b-toggle.collapse-2 class="mt-4 mb-4">Показать фильтры</b-button>
-    <b-collapse id="collapse-2">
+    <b-button v-b-toggle.collapse-2 @click="toggleFilters" class="mt-4 mb-4">
+      {{ filtersVisible ? 'Скрыть фильтры' : 'Показать фильтры' }}
+    </b-button>
+    <b-collapse :visible="filtersVisible" id="collapse-2">
       <b-card>
         <h4>Фильтрация</h4>
         <b-form class="pb-2" inline @submit.prevent.stop>
@@ -95,6 +97,7 @@ export default {
   },
   data() {
     return {
+      filtersVisible: false,
       manufacturerId: null,
       vendorCode: null,
       dateFrom: null,
@@ -127,6 +130,9 @@ export default {
     },
   },
   methods: {
+    toggleFilters() {
+      this.filtersVisible = !this.filtersVisible;
+    },
     setFilterValues(filters) {
       this.manufacturerId = filters.manufacturerId;
       this.dateFrom = filters.dateFrom;
