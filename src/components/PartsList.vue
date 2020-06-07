@@ -161,7 +161,6 @@ export default {
       this.$store.dispatch('setSorting', payload);
     },
     setFilters(parts) {
-      this.resetPagination();
       const { filters } = this.$store.getters;
       let filteredParts = parts;
 
