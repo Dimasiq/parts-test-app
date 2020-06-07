@@ -2,13 +2,13 @@
   <b-tr>
     <b-td>
       {{ createdAt.date }}
-      <pre>{{ createdAt.time }}</pre>
+      <pre class="mb-0">{{ createdAt.time }}</pre>
     </b-td>
     <b-td>
       {{ partData.vendorCode}}
     </b-td>
     <b-td>
-      3
+      {{ partData.allOffersCount }} шт.
     </b-td>
     <b-td>
       {{ partData.priceMin }}
@@ -25,11 +25,17 @@
     <b-td>
       {{ partData.isDeleted ? 'В архиве' : 'Доступна' }}
     </b-td>
-    <b-td class="d-flex justify-content-center">
+    <b-td class="d-flex flex-column justify-content-center">
       <b-button
+        class="mb-2"
         :variant="partData.isDeleted ? 'success' : 'danger'"
         @click="togglePart(partData.partId)">
         {{ partData.isDeleted ? 'Восстановить' : 'Удалить' }}
+      </b-button>
+      <b-button
+        variant="primary"
+        @click="setFormPart(partData)">
+        Изменить
       </b-button>
     </b-td>
   </b-tr>
@@ -58,17 +64,12 @@ export default {
   },
   methods: {
     togglePart(id) {
-      const { partsList } = this.$store.getters;
-      partsList.map((el) => {
-        if (el.partId === id) {
-          const changedElem = { ...el };
-          changedElem.isDeleted = !changedElem.isDeleted;
-          this.$store.dispatch('updatePart', changedElem);
-          return changedElem;
-        }
-        return el;
-      });
-      this.$emit('togglePart');
+      this.$store.dispatch('togglePart', id);
+    },
+    setFormPart(partData) {
+      window.scrollTo(0, 0);
+      const editedPart = partData;
+      this.$store.dispatch('setFormPart', editedPart);
     },
   },
 };
@@ -77,9 +78,11 @@ export default {
 <style lang="scss" scoped>
 tr {
   td {
+    font-size: 13px;
     vertical-align: middle;
     button {
       width: 130px;
+      font-size: 13px;
     }
   }
 }

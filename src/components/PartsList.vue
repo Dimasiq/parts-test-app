@@ -21,7 +21,7 @@
               :class="sorting.param === 'createdAt' ? (sorting.desc ? 'desc' : 'asc') : ''"
               @click="setSorting('createdAt')">Создано
             </b-th>
-            <b-th>Код товара</b-th>
+            <b-th class="code-col">Код товара</b-th>
             <b-th>Остаток</b-th>
             <b-th class="price-col sortable position-relative"
               :class="sorting.param === 'priceMin' ? (sorting.desc ? 'desc' : 'asc') : ''"
@@ -34,14 +34,13 @@
               @click="setSorting('partId')">№ детали
             </b-th>
             <b-th>Статус</b-th>
-            <b-th></b-th>
+            <b-th class="pl-4"></b-th>
           </b-tr>
         </b-thead>
         <b-tbody>
           <PartItem
             v-for="part in partsList" :key="part.partId"
-            :partData="part"
-            @togglePart="checkEmptyPage" />
+            :partData="part" />
         </b-tbody>
       </b-table-simple>
       <ul >
@@ -102,24 +101,16 @@ export default {
     partsList() {
       let partsList = [];
       if (this.tabFiltering === 'deleted') {
-        partsList = this.$store.getters.partsList.filter((el) => {
-          if (el.isDeleted) {
-            return el;
-          }
-          return null;
-        });
+        partsList = this.$store.getters.deletedParts;
       } else if (this.tabFiltering === 'available') {
-        partsList = this.$store.getters.partsList.filter((el) => {
-          if (!el.isDeleted) {
-            return el;
-          }
-          return null;
-        });
+        partsList = this.$store.getters.availableParts;
       } else {
         partsList = this.$store.getters.partsList;
       }
-      const filteredParts = this.setFilters(partsList);
-      return this.paginateParts(filteredParts);
+      return this.paginateParts(this.setFilters(partsList));
+    },
+    filters() {
+      return this.$store.getters.filters;
     },
     pagesTotal() {
       const len = this.partsTotal;
@@ -127,6 +118,9 @@ export default {
       return Math.ceil(len / size);
     },
     stringShown() {
+      if (!this.partsList.length) {
+        return '';
+      }
       const pageStart = this.currentPage[this.tabFiltering] * Number(this.pagePortion) + 1;
       const pageEnd = this.currentPage[this.tabFiltering] === this.pagesTotal - 1 ? this.partsTotal
         : (pageStart + Number(this.pagePortion)) - 1;
@@ -140,11 +134,7 @@ export default {
       }
     },
     pagePortion() {
-      this.currentPage = {
-        all: 0,
-        deleted: 0,
-        available: 0,
-      };
+      this.resetPagination();
     },
   },
   methods: {
@@ -167,15 +157,11 @@ export default {
     },
     setSorting(param) {
       const payload = { ...this.sorting };
-      if (this.sorting.param === param) {
-        payload.desc = !payload.desc;
-      } else {
-        payload.param = param;
-        payload.desc = true;
-      }
+      payload.param = param;
       this.$store.dispatch('setSorting', payload);
     },
     setFilters(parts) {
+      this.resetPagination();
       const { filters } = this.$store.getters;
       let filteredParts = parts;
 
@@ -208,6 +194,13 @@ export default {
       }
       return filteredParts;
     },
+    resetPagination() {
+      this.currentPage = {
+        all: 0,
+        deleted: 0,
+        available: 0,
+      };
+    },
     prevPage() {
       this.currentPage[this.tabFiltering] -= 1;
     },
@@ -220,31 +213,40 @@ export default {
 
 <style lang="scss" scoped>
 th {
-  text-align: center;
+  font-size: 14px;
+  text-align: left;
   &.sortable {
     text-decoration: underline;
     &:hover {
       text-decoration: none;
     }
   }
+  &.code-col {
+    min-width: 8rem;
+    width: 8rem;
+  }
   &.name-col {
-    min-width: 15rem;
+    min-width: 12rem;
+    width: 12rem;
   }
   &.date-col {
-    min-width: 10rem;
+    min-width: 7rem;
+    width: 7rem;
   }
   &.price-col {
-    min-width: 6rem;
+    min-width: 5rem;
+    width: 5rem;
   }
   &.part-id-col {
-    min-width: 8rem;
+    min-width: 7rem;
+    width: 7rem;
   }
   &::after {
     width: auto;
     height: auto;
     display: block;
     position: absolute;
-    right: 10px;
+    right: 20px;
     top: 20%;
   }
   &.asc {

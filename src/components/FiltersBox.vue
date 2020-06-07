@@ -1,66 +1,87 @@
 <template>
   <div>
-    <h3>Фильтрация</h3>
-    <b-form class="pb-2" inline>
-      <b-form-group class="pb-4 mr-2" @submit.prevent="setFiltering">
-        <b-form-group
-          label="Производитель:"
-          label-for="vendor_code" />
-          <b-form-select
-            id="vendor_code"
-            v-model="filteringOptions.manufacturerId"
-            :options="manufacturerId"
-            @change="setFiltering">
-            <template v-slot:first>
-              <b-form-select-option :value="null">
-                Все
-              </b-form-select-option>
-            </template>
-          </b-form-select>
-      </b-form-group>
-      <b-form-group class="pb-4 mr-2">
-        <b-form-group
-          label="Номер запчасти:"
-          label-for="vendorCode" />
-        <vue-bootstrap-typeahead
-          ref="typeahead"
-          v-model="vendorCode"
-          :data="vendorCodesList"
-          :minMatchingChars="2"
-          @input="setVendorCode"
-        />
-      </b-form-group>
-      <b-form-group class="pb-4 mr-2">
-        <b-form-group
-          label="Дата создания от:"
-          label-for="datepicker-from" />
-        <b-form-datepicker
-          id="datepicker-from"
-          v-model="filteringOptions.dateFrom"
-          @input="setFiltering"
-        />
-        <span
-          v-if="filteringOptions.dateFrom"
-          class="position-absolute clear-date"
-          @click="clearDate('dateFrom')">Очистить</span>
-      </b-form-group>
-      <b-form-group class="pb-4 mr-2">
-        <b-form-group
-          label="Дата создания до:"
-          label-for="datepicker-to" />
-        <b-form-datepicker
-          id="datepicker-to"
-          class="input-group"
-          v-model="filteringOptions.dateTo"
-          @input="setFiltering"
-        />
-        <span
-          v-if="filteringOptions.dateTo"
-          class="position-absolute clear-date"
-          @click="clearDate('dateTo')">Очистить</span>
-      </b-form-group>
-    </b-form>
-    <b-button variant="warning" class="mt-2" @click="resetFilters">Сбросить фильтры</b-button>
+    <b-button v-b-toggle.collapse-2 class="mt-4 mb-4">Показать фильтры</b-button>
+    <b-collapse id="collapse-2">
+      <b-card>
+        <h3>Фильтрация</h3>
+        <b-form class="pb-2" inline @submit.prevent.stop>
+          <b-form-group class="pb-4 mr-2" @submit.prevent="setFiltering">
+            <b-form-group
+              label="Производитель:"
+              label-for="manufacturerId" />
+              <b-form-select
+                id="manufacturerId"
+                v-model="manufacturerId"
+                @input="setFiltering"
+                :options="manufacturerIds">
+                <template v-slot:first>
+                  <b-form-select-option :value="null">
+                    Все
+                  </b-form-select-option>
+                </template>
+              </b-form-select>
+          </b-form-group>
+          <b-form-group class="pb-4 mr-2">
+            <b-form-group
+              label="Код товара:"
+              label-for="vendorCode" />
+            <vue-bootstrap-typeahead
+              ref="typeahead"
+              :value="vendorCode"
+              :data="vendorCodesList"
+              @hit="setFiltering"
+              :minMatchingChars="2"
+              v-model="vendorCode"
+            />
+          </b-form-group>
+          <b-form-group class="pb-4 mr-2">
+            <b-form-group
+              label="Дата создания от:"
+              label-for="datepicker-from" />
+            <b-form-datepicker
+              id="datepicker-from"
+              :value="dateFrom"
+              v-model="dateFrom"
+              @input="setFiltering"
+              :date-format-options="{
+                'year':'numeric',
+                'month':'short',
+                'day':'numeric',
+                'weekday':'short'}"
+            />
+            <span
+              v-if="filteringOptions.dateFrom"
+              class="position-absolute clear-date"
+              @click="clearDate('dateFrom')">Очистить</span>
+          </b-form-group>
+          <b-form-group class="pb-4 mr-2">
+            <b-form-group
+              label="Дата создания до:"
+              label-for="datepicker-to" />
+            <b-form-datepicker
+              id="datepicker-to"
+              class="input-group"
+              :value="dateTo"
+              v-model="dateTo"
+              @input="setFiltering"
+              :date-format-options="{
+                'year':'numeric',
+                'month':'short',
+                'day':'numeric',
+                'weekday':'short'}"
+            />
+            <span
+              v-if="filteringOptions.dateTo"
+              class="position-absolute clear-date"
+              @click="clearDate('dateTo')">Очистить</span>
+          </b-form-group>
+        </b-form>
+        <b-button
+          variant="warning"
+          class="mt-2"
+          @click="resetFilters">Сбросить фильтры</b-button>
+      </b-card>
+    </b-collapse>
   </div>
 </template>
 
@@ -74,7 +95,10 @@ export default {
   },
   data() {
     return {
-      vendorCode: '',
+      manufacturerId: null,
+      vendorCode: null,
+      dateFrom: null,
+      dateTo: null,
     };
   },
   mounted() {
@@ -88,54 +112,48 @@ export default {
     filteringOptions() {
       return this.$store.getters.filters;
     },
-    manufacturerId() {
-      const { partsList } = this.$store.getters;
-      const manufacturerIds = [];
-      partsList.map((el) => {
-        manufacturerIds.push({
-          value: el.manufacturerId,
-          text: el.brand,
-        });
-        return el;
-      });
-      manufacturerIds.sort((a, b) => a.text.localeCompare(b.text));
-      return [...new Map(manufacturerIds.map((el) => [el.value, el])).values()];
+    manufacturerIds() {
+      return this.$store.getters.manufacturerIds;
     },
     vendorCodesList() {
-      const { partsList } = this.$store.getters;
-      const vendorCodes = [];
-      partsList.map((el) => {
-        vendorCodes.push(String(el.vendorCode));
-        return el;
-      });
-      return vendorCodes;
+      return this.$store.getters.vendorCodesList;
     },
   },
   watch: {
     vendorCode(val) {
-      console.log('watch vendorCode val', val);
       if (val === '') {
-        this.filteringOptions.vendorCode = val;
         this.setFiltering();
       }
     },
   },
   methods: {
-    setVendorCode() {
-      this.filteringOptions.vendorCode = this.vendorCode;
-      this.setFiltering();
-    },
     resetFilters() {
-      const { defaultFiltering } = this.$store.getters;
+      this.manufacturerId = null;
+      this.vendorCode = null;
+      this.dateFrom = null;
+      this.dateTo = null;
       this.$refs.typeahead.inputValue = '';
-      this.$store.dispatch('setFiltering', defaultFiltering);
+
+      this.$store.dispatch('resetFiltering');
     },
     clearDate(field) {
-      this.filteringOptions[field] = null;
+      this[field] = null;
       this.setFiltering();
     },
     setFiltering() {
-      this.$store.dispatch('setFiltering', this.filteringOptions);
+      const {
+        manufacturerId,
+        vendorCode,
+        dateFrom,
+        dateTo,
+      } = this;
+
+      this.$store.dispatch('setFiltering', {
+        manufacturerId,
+        vendorCode,
+        dateFrom,
+        dateTo,
+      });
     },
   },
 };

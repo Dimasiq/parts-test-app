@@ -1,6 +1,7 @@
 <template>
   <div class="home pt-4">
     <h1>Список запчастей</h1>
+    <PartForm />
     <FiltersBox />
     <div class="tabs mt-4">
       <span
@@ -25,14 +26,16 @@
 
 <script>
 
-import PartsList from '../components/PartsList.vue';
+import PartForm from '../components/PartForm.vue';
 import FiltersBox from '../components/FiltersBox.vue';
+import PartsList from '../components/PartsList.vue';
 
 export default {
   name: 'Home',
   components: {
-    PartsList,
+    PartForm,
     FiltersBox,
+    PartsList,
   },
   computed: {
     activeTab() {
