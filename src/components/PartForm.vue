@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h3>Форма создания и изменения запчастей</h3>
-    <b-form class="pb-2" @submit.prevent="savePart">
-      <div class="d-flex">
+    <h4>Создание и редактирование запчастей</h4>
+    <b-form class="pb-2" @submit.prevent.stop="savePart">
+      <div class="d-flex flex-wrap">
         <b-form-group class="pb-2 mr-2">
           <label for="partIdForm">№ детали:</label>
           <b-input

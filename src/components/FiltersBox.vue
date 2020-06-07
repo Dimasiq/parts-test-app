@@ -3,7 +3,7 @@
     <b-button v-b-toggle.collapse-2 class="mt-4 mb-4">Показать фильтры</b-button>
     <b-collapse id="collapse-2">
       <b-card>
-        <h3>Фильтрация</h3>
+        <h4>Фильтрация</h4>
         <b-form class="pb-2" inline @submit.prevent.stop>
           <b-form-group class="pb-4 mr-2" @submit.prevent="setFiltering">
             <b-form-group
