@@ -102,11 +102,11 @@ export default {
     };
   },
   mounted() {
-    let val = '';
     if (localStorage.listFiltering) {
-      val = JSON.parse(localStorage.listFiltering).vendorCode || '';
+      const filters = JSON.parse(localStorage.listFiltering);
+      this.$refs.typeahead.inputValue = filters.vendorCode || '';
+      this.setFilterValues(filters);
     }
-    this.$refs.typeahead.inputValue = val;
   },
   computed: {
     filteringOptions() {
@@ -127,6 +127,11 @@ export default {
     },
   },
   methods: {
+    setFilterValues(filters) {
+      this.manufacturerId = filters.manufacturerId;
+      this.dateFrom = filters.dateFrom;
+      this.dateTo = filters.dateTo;
+    },
     resetFilters() {
       this.manufacturerId = null;
       this.vendorCode = null;
@@ -141,9 +146,9 @@ export default {
       this.setFiltering();
     },
     setFiltering() {
+      const vendorCode = this.$refs.typeahead.inputValue || '';
       const {
         manufacturerId,
-        vendorCode,
         dateFrom,
         dateTo,
       } = this;
